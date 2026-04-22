@@ -26,7 +26,8 @@ def transaction_inspector(trans_num: str)-> dict:
     row = _df[_df['trans_num']== trans_num].iloc[0]
     amount = float(row['amt'])
     trans_datetime = str(row['trans_date_trans_time'])
-    merchant = str(row['merchant'])
+    #merchant = str(row['merchant'])
+    merchant = str(row['merchant']).replace('fraud_', '')
     category = str(row['category'])
     distance_from_home_km = _haversine_km( row['lat'],row['long'],row['merch_lat'],row['merch_long'] )
     
