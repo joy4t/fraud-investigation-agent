@@ -1,7 +1,8 @@
 import pandas as pd
 from langchain_core.tools  import tool
+from src.tools._data import df
 
-_df = pd.read_csv("data/fraudTrain.csv", dtype={"cc_num": "int64"})
+#df = pd.read_csv("data/fraudTrain.csv", dtype={"cc_num": "int64"})
 
 
 import math
@@ -23,7 +24,10 @@ def transaction_inspector(trans_num: str)-> dict:
     the customer's baseline profile during fraud investigation.
     
     """
-    row = _df[_df['trans_num']== trans_num].iloc[0]
+    trans_num = str(trans_num)
+    #cc_num = str(cc_num)
+
+    row = df[df['trans_num']== trans_num].iloc[0]
     amount = float(row['amt'])
     trans_datetime = str(row['trans_date_trans_time'])
     #merchant = str(row['merchant'])
@@ -36,5 +40,5 @@ def transaction_inspector(trans_num: str)-> dict:
     'datetime' : trans_datetime,
     'merchant': merchant,
     'category' :category,
-    "cc_num": int(row['cc_num']),
+    "cc_num": str(row['cc_num']),
     'distance_from_home_km': distance_from_home_km }
