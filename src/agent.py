@@ -11,6 +11,7 @@ from src.tools.customer_profiler import customer_profiler
 from src.tools.transaction_inspector import transaction_inspector
 from src.tools.risk_scorer import risk_scorer
 from src.tools.report_generator import report_generator
+import json
 
 load_dotenv()
 
@@ -20,8 +21,7 @@ class AgentState(TypedDict):
 tools = [customer_profiler, transaction_inspector, risk_scorer, report_generator]
 
 llm = ChatGroq(
-    model = "llama-3.3-70b-versatile", temperature = 0
-).bind_tools(tools)
+    model = "llama-3.3-70b-versatile", temperature = 0 ).bind_tools(tools)
 
 def agent_node(state: AgentState) -> dict:
     response = llm.invoke(state['messages'])
@@ -57,16 +57,29 @@ Follow this sequence:
 
 Do NOT skip steps. Do NOT invent numbers — use only what the tools return."""
 
-
-
-
-def investigate(trans_num: str) -> str:
+def investigate(trans_num: str) -> dict:
+    """Run the fraud investigation agent and return structured results."""
     result = app.invoke(
-        {"messages": [SystemMessage(content=SYSTEM_PROMPT),
-            HumanMessage(content=f"Investigate transaction {trans_num}")
+        {"messages": [
+            SystemMessage(content = SYSTEM_PROMPT),
+            HumanMessage(content = f"Investigate transaction {trans_num}")
         ]}
     )
-    return result["messages"][-1].content
+
+    report_data = None
+    for msg in reversed(result["messages"]):
+        if hasattr(msg, 'name') and msg.name == 'report_generator':
+            report_data = json.loads(msg.content)
+            break
+
+    summary = result["messages"][-1].content
+
+    return {
+        "trans_num": trans_num,
+        "summary": summary,
+        "report": report_data
+    }
 
 if __name__ == "__main__":
-    print(investigate("d96c1d6c9551870ef62686b070a8e7db"))
+    result = investigate("7f88714df34f84c34398cafcac7f1644")
+    print(json.dumps(result, indent = 2))
