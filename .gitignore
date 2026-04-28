@@ -4,6 +4,6 @@ __pycache__/
 .env
 .vscode/
 .ipynb_checkpoints/
-data/
+#data/
 *.egg-info/
 scratch.py
