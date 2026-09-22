@@ -3,6 +3,7 @@
 A LangGraph agent that takes a flagged transaction ID, runs four rule-based investigation tools in a fixed sequence, and returns a structured risk verdict with a per-signal evidence trail.
 
 **Repo:** [github.com/joy4t/fraud-investigation-agent](https://github.com/joy4t/fraud-investigation-agent)
+
 **Live demo:** currently offline. The previous Railway deployment has been deprovisioned. Redeployment to HuggingFace Spaces is the first roadmap item.
 
 ---
